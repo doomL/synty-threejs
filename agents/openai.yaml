@@ -1,0 +1,4 @@
+interface:
+  display_name: "Synty + Three.js"
+  short_description: "Use Synty assets and animate compatible Three.js rigs"
+  default_prompt: "Use $synty-threejs to build a mobile Three.js scene with my licensed Synty assets."

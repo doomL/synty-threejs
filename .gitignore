@@ -1,0 +1,17 @@
+node_modules/
+__pycache__/
+*.pyc
+.env
+*.glb
+*.gltf
+*.fbx
+*.unitypackage
+*.zip
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.blend
+*.sqlite*
+/data/
+/local-assets/

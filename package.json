@@ -1,0 +1,1 @@
+{"name":"synty-threejs-skill","version":"1.0.0","private":true,"type":"module","description":"Reusable instructions and tested utilities for Synty assets in Three.js","scripts":{"test":"node --test tests/*.test.js"},"devDependencies":{"three":"0.170.0"}}
