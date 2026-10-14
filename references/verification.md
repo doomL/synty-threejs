@@ -13,9 +13,15 @@ An animation's presence and matched track count are necessary, not sufficient. B
 
 Do not require fixed distances for IK handles, weapon targets, facial controls or root-to-pelvis offsets. These can legitimately translate. Different source/target anatomy can require different tolerances or a different retargeting approach.
 
-Use a regression case that the previous broken binding fails. In the originating demo, name-only idle binding displaced a joint by about 27 cm; the corrected basis transfer matched core anatomical joints within about 0.023 mm across 424 clip/character combinations sampled 21 times. This records tested evidence for those exports, not guaranteed error bounds for other packs.
+Use a regression case that the previous broken binding fails. Choose tolerances from the relevant rig scale and anatomical expectations, not from another project's measured error.
+
+Check movement style as well as structure: stance, torso posture, foot contact, stride at the controller's speed, and the intended action. Correctly transferred creature movement can still be unsuitable for a human character. Sampling geometry does not establish this visual suitability.
 
 The public tests in this repository use synthetic skeletons and synthetic GLB bytes. They verify basis changes, position/scale transfer, finger mapping, independent actor cloning, additive reference behavior and unchanged texture/geometry bytes. They do not replace private real-pack validation in a new application.
+
+## Materials
+
+Compare exported material slots and image assignments against source metadata. Report missing expected textures separately from deliberately flat-colour materials. Check external image URLs, texture coordinate channels and separate atlases; the presence of one image in a GLB is not proof that every visible material is correct. Check loader errors and request failures as well as the loaded material maps.
 
 ## Browser behavior
 

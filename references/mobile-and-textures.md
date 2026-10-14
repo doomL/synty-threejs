@@ -4,8 +4,6 @@
 
 A small compressed image is not a small decoded texture. A 2048 × 2048 RGBA image needs about 16 MiB before mipmaps. Many GLBs can embed byte-identical atlases while creating distinct textures at runtime.
 
-In the originating demo, duplicated embedded atlas images would have occupied about 474 MB before mipmaps; four distinct originals used about 54 MB. These are observations from that asset selection, not universal Synty budgets.
-
 The optional extractor preserves original image bytes and rebuilds exported copies with shared relative image URLs:
 
 ```sh
@@ -43,6 +41,10 @@ Use separate pointer IDs and pointer capture for movement and look. Simultaneous
 
 Keep the joystick and action controls away from browser chrome and safe-area insets. Handle portrait/landscape resizing. Prevent page dragging on the game surface while letting a scrollable animation panel scroll. Ensure dialogs leave the selected character visible and closing them restores interaction.
 
-Treat run as a clear hold/toggle state; prevent duplicate jumps; distinguish airborne and landing transitions from idle. Use wrapper-group movement for in-place clips. Add camera obstruction handling and colliders appropriate to actual footprints, so tents do not become walk-through scenery.
+Treat run as a clear hold/toggle state; prevent duplicate jumps; distinguish airborne and landing transitions from idle. Use wrapper-group movement for in-place clips. Add camera obstruction handling and colliders appropriate to actual footprints, so movement and camera placement respect the selected geometry.
+
+Match the requested camera type rather than choosing a view solely for convenience. Use the model's measured height and the target viewport to set framing; test obstruction handling and whether interface overlays hide the subject.
+
+Choose antialiasing explicitly for desktop and mobile. Inspect the context's actual antialiasing support, pixel ratio and resulting edges; a renderer option alone is not proof of the device's sample count or visual quality. If a postprocessing fallback is needed, account for its extra render targets and correct colour output. Avoid disabling antialiasing merely because the pointer is coarse.
 
 Start with a modest pixel ratio, shadow resolution and number of dynamic lights. Measure draw calls, frame time and memory under the actual asset selection. Load required movement clips first, load the larger gallery on demand, and expose loading/failure states. Emulated browser tests validate interactions, not physical phone GPU performance.

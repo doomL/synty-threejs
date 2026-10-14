@@ -1,46 +1,46 @@
 ---
 name: synty-threejs
-description: Build or repair Three.js scenes using licensed Synty assets, including MCP export, character cloning, compatible rig animation transfer, shared textures, and mobile controls. Use for Synty model or animation integration; not for generating replacement artwork or general frontend design.
+description: Integrate licensed Synty models, materials and compatible character animations into Three.js scenes, including rig transfer, texture sharing and mobile verification. Use for Synty asset integration or repair, rather than generating replacement artwork or general frontend design.
 ---
 
 # Synty + Three.js
 
-Turn the user's available Synty models into an inspectable, playable Three.js scene. Preserve the requested scope: a tech demo does not need invented missions or game systems.
+Use the user's available Synty assets in the requested Three.js project. This skill works with local files, existing exports or an asset provider; no MCP server is required. Keep asset acquisition and conversion separate from application behavior.
 
-## Establish what is available
+## Establish the inputs
 
-Inspect the existing project, Three.js version, local manifest and configured MCP tools before selecting models. Use verified asset references; a purchased pack is not proof that its contents are indexed or convertible. Keep originals immutable and export only the selected models/clips into project-owned files.
+Inspect the project, installed Three.js version, source files and exported metadata. Confirm units, axes, pivots, materials and actual animation clips before choosing an integration path. Ownership of a pack does not prove that its files are available, and a rigged character does not prove that animations are included.
 
-- When sourcing/exporting through Synty Asset MCP, read [references/mcp-workflow.md](references/mcp-workflow.md). The MCP is optional when the project already has usable GLBs.
-- Keep Synty meshes, textures, previews and session data outside a public skill or source-only repository. Follow the user's licence and publication scope. Model rendering in the application is separate from transmitting previews to external services.
-- If the user requires Synty-only artwork, use Synty terrain, props and characters as well as Synty animation clips. Interface code, camera, lights, fog and collision math do not require replacement artwork. Do not silently substitute primitive scenery, Mixamo clips or generated images.
+Keep originals immutable and preserve model and animation provenance separately. Respect the user's artwork and licensing constraints. If they allow external animations, keep the chosen Synty models and use only authorized animation sources; do not assume permission to substitute meshes or textures. Keep proprietary assets and account/session data outside public code and skill repositories.
 
-## Place static models
+When the user chooses Synty Asset MCP, read the optional [MCP integration guide](references/mcp-workflow.md). Its job is to supply files and metadata; the rest of this workflow does not depend on it.
 
-Use manifest bounds where available: the MCP exports metres, +Y up. Place a wrapper group around a model when moving/rotating it; account for its authored pivot rather than guessing an offset from the file name. Never blindly apply a second 0.01 scale correction. Use instancing for repeated static geometry while retaining each source mesh's local transform and materials.
+## Place models and verify materials
 
-Treat skinning-aware bounds separately from raw accessor bounds. Measure deformed vertices or use an evaluated converter report for a skinned character; accessor min/max can ignore the armature's scale and pose.
+Use verified export units and bounds rather than a pack-wide scale guess. Preserve authored pivots through a placement wrapper. Never apply a second centimetre-to-metre correction merely because an armature has a 0.01 scale. Distinguish posed skinned bounds from raw accessor bounds, which may ignore skinning or parent transforms.
 
-## Animate characters
+A successful load does not prove texture completeness. Check material assignments, UVs, image dependencies and failed requests. Distinguish an intentionally untextured material from a missing expected texture; preserve the former and repair the latter. Avoid replacing all materials with one default atlas when the source specifies separate atlases or material slots.
 
-Read [references/animation-rigs.md](references/animation-rigs.md) before applying a separate animation pack. Matching bone names do not establish matching local axes, bind poses or translation units.
+Use instancing for repeated static geometry while retaining each source mesh's local transform and material assignments. Share textures only when image and sampler/UV state are compatible; see [textures and mobile rendering](references/mobile-and-textures.md).
 
-Use `SkeletonUtils.clone` for independent skinned actors. Keep their armature transforms and inverse bind matrices intact. Build any transfer map from pristine, unanimated template scenes; keep actor/world placement outside those templates.
+## Select and adapt animations
 
-The copyable [assets/retarget.js](assets/retarget.js) implements the bind-basis transfer verified for Goblin War Camp and Goblin Locomotion. It includes Polygon finger-name mappings and additive reference clips. It is a narrowly scoped helper for compatible anatomy, not a universal humanoid retargeter. Inspect its documented assumptions before adopting it for a different pack. Do not replace a mismatch with a hand-tuned rotation on a few bones.
+Read [animation sources and rig compatibility](references/animation-rigs.md) when integrating characters or separate animation libraries.
 
-Crossfade locomotion states. Keep an idle/base layer under additive clips and derive their deltas from the authored reference pose. Decide explicitly whether root motion belongs to the clip or the movement controller, so displacement is not applied twice. Load the clips needed for interaction first; lazy-load the rest if the user wants an animation browser. Do not turn one demo's clip count into a requirement for every project.
+Choose clips for the requested character and action, not just for compatible bone names. Retargeting can preserve valid anatomy while retaining an unsuitable posture or movement style. Identify unavailable clips early and use an authorized alternative when one is permitted.
 
-## Keep mobile work usable
+Use `SkeletonUtils.clone` for independent skinned actors. Preserve their bind matrices and armature transforms. Build mappings from pristine, unanimated reference rigs. Keep world placement outside the templates.
 
-Read [references/mobile-and-textures.md](references/mobile-and-textures.md) for texture sharing and touch-control details. The copyable [assets/shared-textures.js](assets/shared-textures.js) reuses compatible Three.js textures by external image URL and sampler state. The optional [scripts/share_glb_textures.py](scripts/share_glb_textures.py) extracts identical image bytes from exported GLB copies into shared files; it leaves source GLBs untouched.
+The optional [retarget helper](assets/retarget.js) handles compatible anatomy with differing bind axes; its limits and verified cases are documented in the animation reference. It is not a universal humanoid retargeter. Different hierarchies, proportions or reference poses may need offline baking or another validated approach.
 
-Provide loading/error states, reachable touch controls, safe-area spacing, simultaneous movement/look pointers, pointer cancellation, and resize/orientation handling. Test the intended interaction on portrait and landscape layouts. Budget pixel ratio, shadows, draw calls, decoded textures and active rigs; desktop success does not establish physical phone frame rate.
+Plan loop modes, root motion, base/additive layers and interruptible transitions. Keep a base pose under additive layers, use the correct neutral reference, and avoid applying root displacement twice. Test transitions under repeated input changes, not just isolated clips. Export/load the clips the application needs; a large source library does not need to enter the initial bundle.
 
-## Verify the result
+## Match the requested view and device
 
-Read [references/verification.md](references/verification.md) when testing animation or mobile behavior. Check actual posed geometry and joint positions, not just successful loading or nonempty tracks. Distinguish anatomical bones from IK/attachment helpers whose distances can intentionally change.
+Honor the requested camera perspective and composition. For a mobile third-person controller, support simultaneous movement and look pointers, cancellation, resizing and safe-area spacing. Budget pixel ratio, antialiasing, shadows, decoded texture memory and active rigs against the actual target devices; see [mobile rendering](references/mobile-and-textures.md).
 
-Test representative times and transitions, all character variants actually used, and the clips exposed to the user. Where a compatible source reference rig exists, compare world-space anatomical joint positions and rigid limb lengths after transfer. Choose tolerances appropriate to the source meshes; do not copy this project's measured error as a universal bound.
+## Verify the integration
 
-Before delivery, build the application and verify loading, movement, camera, jump/crouch if provided, collisions, rig changes, animation overlays and resource disposal. Report what was checked and whether mobile testing was emulated or performed on a real device. Publicly shipped source must not contain the user's private Synty content.
+Read [verification](references/verification.md) for posed geometry, material checks and runtime behavior. Test the relevant character variants and exposed clips, including loop and transition boundaries. A numerical pose check establishes structural correctness, not visual suitability; inspect representative motion when authorized.
+
+Build the application and exercise the requested controls, camera and interactions. Report meaningful limitations and distinguish synthetic tests, browser emulation and physical-device measurements. Do not generalize one export's measured tolerance or performance budget to unrelated assets.

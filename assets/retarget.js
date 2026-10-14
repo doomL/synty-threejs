@@ -30,16 +30,17 @@ function uniformScale(node) {
   }
   return scale.x;
 }
-export function buildRigTransfer(targetScene, sourceScene) {
+export function buildRigTransfer(targetScene, sourceScene, { resolveBone = sourceBoneName, skipBone = () => false } = {}) {
   targetScene.updateMatrixWorld(true);
   sourceScene.updateMatrixWorld(true);
   const sourceNodes = new Map();
   sourceScene.traverse(node => sourceNodes.set(node.name, node));
   const mappings = new Map();
   targetScene.traverse(target => {
-    if (!target.isBone) return;
-    const name = sourceBoneName(target.name, sourceNodes);
-    if (!name) throw new Error(`Unmapped target bone: ${target.name}`);
+    if (!target.isBone || skipBone(target)) return;
+    const name = resolveBone(target.name, sourceNodes);
+    if (!name || !sourceNodes.has(name)) throw new Error(`Unmapped target bone: ${target.name}`);
+    if (mappings.has(name)) throw new Error(`Source bone mapped more than once: ${name}`);
     const source = sourceNodes.get(name);
     const left = worldQuaternion(target.parent).invert().multiply(worldQuaternion(source.parent));
     const right = worldQuaternion(source).invert().multiply(worldQuaternion(target));

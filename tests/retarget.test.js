@@ -90,3 +90,16 @@ test('neutral additive overlay leaves an independently posed base unchanged',()=
 test('skinned clones have independent bones but shared geometry and material',()=>{
  const root=new THREE.Group(),bone=new THREE.Bone(),child=new THREE.Bone();bone.add(child);root.add(bone);const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0,1,0,0,0,1,0],3));geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(new Uint16Array(12),4));geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute([1,0,0,0,1,0,0,0,1,0,0,0],4));const mesh=new THREE.SkinnedMesh(geometry,new THREE.MeshBasicMaterial());root.add(mesh);mesh.bind(new THREE.Skeleton([bone,child]));const copied=clone(root);const newMesh=copied.children.find(o=>o.isSkinnedMesh);assert.notEqual(newMesh.skeleton.bones[0],mesh.skeleton.bones[0]);assert.equal(newMesh.geometry,mesh.geometry);newMesh.skeleton.bones[0].position.x=2;assert.equal(mesh.skeleton.bones[0].position.x,0);
 });
+
+test('explicit naming adapters preserve motion while excluding a non-deforming helper',()=>{
+ const source=rig('source'),target=rig('target');
+ for(const bone of target.bones.values())bone.name='target_'+bone.name;
+ const helper=new THREE.Bone();helper.name='attachment';helper.position.set(0,2,0);target.bones.get('Hand_L').add(helper);
+ const options={resolveBone:name=>sourceName(name.slice(7)),skipBone:bone=>bone.name==='attachment'};
+ const clip=motion(source),fixed=transferClip(clip,buildRigTransfer(target.scene,source.scene,options),'adapted');
+ const sm=new THREE.AnimationMixer(source.scene),tm=new THREE.AnimationMixer(target.scene);sm.clipAction(clip).play();tm.clipAction(fixed).play();sm.setTime(.5);tm.setTime(.5);source.scene.updateMatrixWorld(true);target.scene.updateMatrixWorld(true);
+ for(const[name]of anatomy)assert.ok(worldPosition(source.scene,sourceName(name)).distanceTo(worldPosition(target.scene,'target_'+name))<1e-5);
+ assert.deepEqual(helper.position.toArray(),[0,2,0]);
+ assert.throws(()=>buildRigTransfer(target.scene,source.scene,{resolveBone:()=> 'nonexistent'}),/Unmapped/);
+ assert.throws(()=>buildRigTransfer(target.scene,source.scene,{resolveBone:()=> 'Hips'}),/mapped more than once/);
+});

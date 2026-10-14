@@ -1,8 +1,8 @@
 # synty-threejs
 
-An agent skill for building Three.js scenes with licensed Synty models and animations. It captures the practical workflow for MCP asset export, correct rig animation transfer, shared atlas textures and mobile third-person controls.
+An agent skill for building Three.js scenes with licensed Synty models and authorized character animations. It covers asset inspection, rig compatibility, materials, texture sharing and mobile controls. It works with local files or any suitable exporter; no MCP server is required.
 
-The most important lesson: matching bone names does **not** make two rigs' local rotations interchangeable. The included retargeting module addresses the compatible Goblin War Camp / Goblin Locomotion rig pair and ships with synthetic regression tests.
+The most important lesson: matching bone names does **not** make two rigs' local rotations interchangeable. The included retargeting module addresses compatible anatomical rigs with different bind axes and ships with synthetic regression tests. Its documented original verification covers the Goblin War Camp / Goblin Locomotion rig pair; that is an implementation limit, not a recommended animation style.
 
 ## Install in Codex
 
