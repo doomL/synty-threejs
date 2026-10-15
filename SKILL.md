@@ -17,7 +17,7 @@ When the user chooses Synty Asset MCP, read the optional [MCP integration guide]
 
 ## Place models and verify materials
 
-Use verified export units and bounds rather than a pack-wide scale guess. Preserve authored pivots through a placement wrapper. Never apply a second centimetre-to-metre correction merely because an armature has a 0.01 scale. Distinguish posed skinned bounds from raw accessor bounds, which may ignore skinning or parent transforms.
+Use verified export units and bounds rather than a pack-wide scale guess. A pack-wide correction is justified only by measured evidence across the pack: some older source packs import every model, warships and buildings included, uniformly 100x small. Preserve authored pivots through a placement wrapper. Never apply a second centimetre-to-metre correction merely because an armature has a 0.01 scale. Distinguish posed skinned bounds from raw accessor bounds, which may ignore skinning or parent transforms.
 
 A successful load does not prove texture completeness. Check material assignments, UVs, image dependencies and failed requests. Distinguish an intentionally untextured material from a missing expected texture; preserve the former and repair the latter. Avoid replacing all materials with one default atlas when the source specifies separate atlases or material slots.
 

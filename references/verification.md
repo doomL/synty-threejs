@@ -27,6 +27,8 @@ Compare exported material slots and image assignments against source metadata. R
 
 Build the production bundle. Capture console/page errors and asset request failures. Check controls with user events: movement, camera, cancellation, jump/landing, crouch, dialogs and rig switching. Test simultaneous touch pointers, both orientations, viewport overflow and control reachability. Exercise repeated rig changes and verify bone texture counts stabilize after disposal.
 
+Headless software rendering can run at about one frame per second. With a clamped frame delta, wall-clock waits then advance only a fraction of simulated time, so death poses, fades and timers look stuck. Step the simulation explicitly or inspect action times before diagnosing a bug. Likewise a preview harness that loops every clip shows the start of a one-shot clip sampled past its duration.
+
 If the user wants all animation clips available, test the complete exposed set on the relevant rig; do not infer success for the rest from one idle clip. Check that partial conversion failures are visibly reported.
 
 A numerical test can validate deformed geometry without transmitting proprietary preview images. When visual inspection is authorized, also inspect representative poses and the composition locally. Report whether tests used physical hardware, browser emulation or synthetic inputs; never label headless software rendering as a phone performance measurement.

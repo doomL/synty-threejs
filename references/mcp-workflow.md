@@ -30,6 +30,8 @@ Keep references and conversion provenance in the project's private manifest. Che
 
 Use `get_asset_details` to distinguish catalog classification from verified exported content. A skinned GLB can have no clips. Check whether animation export was disabled before concluding that the source has none. Use conversion material diagnostics and `get_asset_dependencies` to distinguish missing references from explicitly untextured slots.
 
+Characters are often nodes of one shared bundle model (`Characters.fbx`) whose prefabs embed every character with all but one switched off. Check that `node_in_model` names the requested character and that the export shows it, not a sibling or an attachment item; older server versions took the first, inactive renderer. Read conversion warnings for automatic unit fixes and removed shadow/collision proxies, and compare a large piece of each pack against its expected real size before assuming the remaining assets are right.
+
 Collection provenance identifies each asset's source separately; maintain that distinction when combining a model and an animation library in the application. The server preserves/converts clips but does not select their movement style, retarget actors or build an application controller.
 
 Obtain a pristine source reference rig for a separate animation library. The animated first frame is not a substitute for an authored neutral reference. The rig-transfer procedure belongs in [the animation guide](animation-rigs.md), whether the files came from this MCP or another exporter.
